@@ -1,0 +1,59 @@
+services:
+  delivery-db:
+    image: postgres:15-alpine
+    container_name: delivery-postgres
+    environment:
+      POSTGRES_USER: delivery_user
+      POSTGRES_PASSWORD: delivery_pass
+      POSTGRES_DB: delivery_api
+    volumes:
+      - delivery-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U delivery_user -d delivery_api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mv2img-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: delivery_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - mv2img-network
+
+  delivery-api:
+    image: lerrana/mv2img-delivery:latest
+    container_name: delivery-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://delivery_user:delivery_pass@delivery-db:5432/delivery_api
+      SECRET_KEY: your-secret-key-change-in-production
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-}
+    depends_on:
+      delivery-db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - load-data:/data
+    networks:
+      - mv2img-network
+
+volumes:
+  delivery-postgres-data:
+  redis-data:
+  load-data:
+
+networks:
+  mv2img-network:
+    driver: bridge

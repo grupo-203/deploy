@@ -1,0 +1,97 @@
+services:
+  process-request-job:
+    image: lerrana/mv2img-process:latest
+    container_name: mv2img_process_request_job
+    env_file: ./mv2img-process.env
+    environment:
+      - QUEUE_LIST=carregamentos.video.request
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      load-api:
+        condition: service_started
+      auth-api:
+        condition: service_started
+    volumes:
+      - load-data:/data
+    networks:
+      - mv2img-network
+
+  process-extract-frames-job:
+    image: lerrana/mv2img-process:latest
+    container_name: mv2img_process_extract_frames_job
+    env_file: ./mv2img-process.env
+    environment:
+      - QUEUE_LIST=extract-frames
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      load-api:
+        condition: service_started
+      auth-api:
+        condition: service_started
+    volumes:
+      - load-data:/data
+    networks:
+      - mv2img-network
+
+  process-generate-zip-job:
+    image: lerrana/mv2img-process:latest
+    container_name: mv2img_process_generate_zip_job
+    env_file: ./mv2img-process.env
+    environment:
+      - QUEUE_LIST=generate-zip
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      load-api:
+        condition: service_started
+      auth-api:
+        condition: service_started
+    volumes:
+      - load-data:/data
+    networks:
+      - mv2img-network
+
+  process-publish-job:
+    image: lerrana/mv2img-process:latest
+    container_name: mv2img_process_publish_job
+    env_file: ./mv2img-process.env
+    environment:
+      - QUEUE_LIST=publish
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      load-api:
+        condition: service_started
+      auth-api:
+        condition: service_started
+    volumes:
+      - load-data:/data
+    networks:
+      - mv2img-network
+
+  process-dead-letter-job:
+    image: lerrana/mv2img-process:latest
+    container_name: mv2img_process_dead_letter_job
+    env_file: ./mv2img-process.env
+    environment:
+      - QUEUE_LIST=dead-letter
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      load-api:
+        condition: service_started
+      auth-api:
+        condition: service_started
+    volumes:
+      - load-data:/data
+    networks:
+      - mv2img-network
+
+volumes:
+  load-data:
+
+networks:
+  mv2img-network:
+    driver: bridge

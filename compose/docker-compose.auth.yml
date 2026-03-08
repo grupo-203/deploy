@@ -1,0 +1,42 @@
+services:
+  auth-db:
+    image: postgres:16-alpine
+    container_name: auth-postgres
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: auth_password
+    volumes:
+      - auth-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auth_user -d auth_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mv2img-network
+
+  auth-api:
+    image: lerrana/mv2img-auth:latest
+    container_name: auth-service
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://auth-db:5432/auth_db
+      SPRING_DATASOURCE_USERNAME: auth_user
+      SPRING_DATASOURCE_PASSWORD: auth_password
+      JWT_SECRET: your-secret-key-change-this-in-production-minimum-256-bits
+      JWT_ISSUER: fiap-hackaton-auth
+      JWT_EXPIRATION_MS: 3600000
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    networks:
+      - mv2img-network
+
+volumes:
+  auth-postgres-data:
+
+networks:
+  mv2img-network:
+    driver: bridge

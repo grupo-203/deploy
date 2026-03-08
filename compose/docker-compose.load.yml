@@ -1,0 +1,66 @@
+services:
+  load-db:
+    image: postgres:15-alpine
+    container_name: carregamento_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: carregamento
+    volumes:
+      - load-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mv2img-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: carregamento_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASS: rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mv2img-network
+
+  load-api:
+    image: lerrana/mv2img-load:latest
+    container_name: carregamento_api
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://load-db:5432/carregamento
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: rabbit
+      SPRING_RABBITMQ_PASSWORD: rabbit
+      STORAGE_BASE_DIR: /data
+    depends_on:
+      load-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - load-data:/data
+    networks:
+      - mv2img-network
+
+volumes:
+  load-postgres-data:
+  load-data:
+
+networks:
+  mv2img-network:
+    driver: bridge
