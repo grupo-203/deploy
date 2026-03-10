@@ -27,7 +27,7 @@ services:
       - mv2img-network
 
   delivery-api:
-    image: lerrana/mv2img-delivery:latest
+    image: jefferson233/mv2img-delivery:latest
     container_name: delivery-api
     ports:
       - "8000:8000"

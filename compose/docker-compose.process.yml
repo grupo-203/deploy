@@ -1,6 +1,6 @@
 services:
   process-request-job:
-    image: lerrana/mv2img-process:latest
+    image: jefferson233/mv2img-process:latest
     container_name: mv2img_process_request_job
     env_file: ./mv2img-process.env
     environment:
@@ -18,7 +18,7 @@ services:
       - mv2img-network
 
   process-extract-frames-job:
-    image: lerrana/mv2img-process:latest
+    image: jefferson233/mv2img-process:latest
     container_name: mv2img_process_extract_frames_job
     env_file: ./mv2img-process.env
     environment:
@@ -36,7 +36,7 @@ services:
       - mv2img-network
 
   process-generate-zip-job:
-    image: lerrana/mv2img-process:latest
+    image: jefferson233/mv2img-process:latest
     container_name: mv2img_process_generate_zip_job
     env_file: ./mv2img-process.env
     environment:
@@ -54,7 +54,7 @@ services:
       - mv2img-network
 
   process-publish-job:
-    image: lerrana/mv2img-process:latest
+    image: jefferson233/mv2img-process:latest
     container_name: mv2img_process_publish_job
     env_file: ./mv2img-process.env
     environment:
@@ -72,7 +72,7 @@ services:
       - mv2img-network
 
   process-dead-letter-job:
-    image: lerrana/mv2img-process:latest
+    image: jefferson233/mv2img-process:latest
     container_name: mv2img_process_dead_letter_job
     env_file: ./mv2img-process.env
     environment:

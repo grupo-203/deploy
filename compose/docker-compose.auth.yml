@@ -17,7 +17,7 @@ services:
       - mv2img-network
 
   auth-api:
-    image: lerrana/mv2img-auth:latest
+    image: jefferson233/mv2img-auth:latest
     container_name: auth-service
     ports:
       - "8080:8080"

@@ -34,7 +34,7 @@ services:
       - mv2img-network
 
   load-api:
-    image: lerrana/mv2img-load:latest
+    image: jefferson233/mv2img-load:latest
     container_name: carregamento_api
     ports:
       - "8081:8080"

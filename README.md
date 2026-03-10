@@ -35,7 +35,7 @@ Usuário → Load API (upload) → RabbitMQ → Workers de Processamento
 
 ### Workers de Processamento
 
-Todos utilizam a imagem `lerrana/mv2img-process:latest` e se comunicam via RabbitMQ:
+Todos utilizam a imagem `jefferson233/mv2img-process:latest` e se comunicam via RabbitMQ:
 
 | Worker | Fila | Função |
 |---|---|---|
@@ -184,10 +184,10 @@ docker compose restart load-api
 
 Todas as imagens são obtidas do Docker Hub sob a organização `lerrana`:
 
-- `lerrana/mv2img-auth:latest`
-- `lerrana/mv2img-load:latest`
-- `lerrana/mv2img-delivery:latest`
-- `lerrana/mv2img-process:latest`
+- `jefferson233/mv2img-auth:latest`
+- `jefferson233/mv2img-load:latest`
+- `jefferson233/mv2img-delivery:latest`
+- `jefferson233/mv2img-process:latest`
 
 O **Watchtower** monitora e atualiza automaticamente essas imagens a cada 30 segundos.
 
