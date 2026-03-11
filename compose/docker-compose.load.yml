@@ -34,7 +34,7 @@ services:
       - mv2img-network
 
   load-api:
-    image: jefferson233/mv2img-load:latest
+    image: jefferson233/carregamento-api:latest
     container_name: carregamento_api
     ports:
       - "8081:8080"
@@ -47,6 +47,7 @@ services:
       SPRING_RABBITMQ_USERNAME: rabbit
       SPRING_RABBITMQ_PASSWORD: rabbit
       STORAGE_BASE_DIR: /data
+      APP_AUTH-SERVICE-URL: http://auth-api:8080
     depends_on:
       load-db:
         condition: service_healthy
